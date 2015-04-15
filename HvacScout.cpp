@@ -2,11 +2,12 @@
 #include "HvacScout.h"
 #include <SoftwareSerial.h>
 
-HvacScout::HvacScout(String name, uint8_t pinRx, uint8_t pinTx)
+HvacScout::HvacScout(String name, uint8_t pinRx, uint8_t pinTx, uint8_t pinKey)
 {
 	// slave Bluetooth socket to communicate with Scout device:
     // For HC-05 Bluetooth module's TX goes to arduino's TX (in this case, pin 3).
     this->btSerial = new SoftwareSerial(pinRx,pinTx);
+    this->pinKey = pinKey;
     this->name = name;
     this->temperature = 0;
     this->power = false;

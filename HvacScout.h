@@ -8,7 +8,7 @@ class HvacScout
 {
 	public:
         // constructor:
-		HvacScout(String strName, uint8_t pinRx, uint8_t pinTx);
+		HvacScout(String strName, uint8_t pinRx, uint8_t pinTx, uint8_t pinKey);
         // setters:
 		void setPower(bool newState);
 		void setDelayTime(uint16_t seconds);
@@ -19,6 +19,7 @@ class HvacScout
 		uint16_t getDelayTime();
 	private:
         SoftwareSerial* btSerial;
+        uint8_t pinKey;
         String name;
         uint8_t temperature;
         bool power;
