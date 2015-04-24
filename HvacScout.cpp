@@ -13,8 +13,12 @@ HvacScout::HvacScout(String name, uint8_t pinRx, uint8_t pinTx, uint8_t pinKey, 
     pinMode(this->pinKey, OUTPUT);
     pinMode(this->vcc, OUTPUT);
     this->name = name;
+    this->groupId = -1;
     this->temperature = 0;
+    this->maxTemperature = 25;
+    this->humidity = 0;
     this->power = false;
+    this->automatic = false;
     this->quiet = false;
     this->delayTime = 900000; // 15 minutes by default.
 }
@@ -26,9 +30,9 @@ void HvacScout::startSPP()
     digitalWrite(this->pinKey, HIGH);
     digitalWrite(this->vcc, HIGH);
     delay(500);
-    this->serial->println("AT");
+    this->serial->println(F("AT"));
     delay(500);
-    this->serial->println("AT+INIT");
+    this->serial->println(F("AT+INIT"));
     delay(500);
     digitalWrite(this->vcc, LOW);
     delay(500);
@@ -38,8 +42,15 @@ void HvacScout::startSPP()
 }
 void HvacScout::start()
 {
-    Serial.println(F("Starting Serial"));
+    Serial.print(F("Starting Serial of "));
+    Serial.println(this->getName());
     this->serial->begin(9600);
+}
+void HvacScout::end()
+{
+    Serial.print(F("Ending Serial of "));
+    Serial.println(this->getName());
+    this->serial->end();
 }
 bool HvacScout::readResultFromSerial(String expected, char terminator)
 {
@@ -47,6 +58,7 @@ bool HvacScout::readResultFromSerial(String expected, char terminator)
         String message;
         char c;
         while ( this->serial->available() ) {
+			delay(50);
             c = this->serial->read();
             if (c == terminator) break;
             message += c;
@@ -62,19 +74,45 @@ void HvacScout::setName(String name)
 {
     this->name = name;
 }
+void HvacScout::setGroupId(int8_t value)
+{
+    this->groupId = value;
+}
 void HvacScout::setTemperature(uint8_t value)
+{
+    this->temperature = value;
+}
+void HvacScout::setMaxTemperature(uint8_t value)
+{
+    this->maxTemperature = value;
+}
+void HvacScout::setHumidity(uint8_t value)
 {
     this->temperature = value;
 }
 void HvacScout::setPower(bool newState)
 {
+	this->power = newState;
+}
+void HvacScout::triggerPower(bool newState)
+{
     if (newState == true) {
-        this->serial->println("turn_on;");
-        if ( readResultFromSerial("OK",';') ) this->power = true;
+        this->serial->println(F("turnOn;"));
+        if ( readResultFromSerial(F("OK"),';') ) {
+			this->power = true;
+			Serial.println("OK;");
+		}
     } else {
-        this->serial->println("turn_off;");
-        if ( readResultFromSerial("OK",';') ) this->power = false;
+        this->serial->println(F("turnOff;"));
+        if ( readResultFromSerial(F("OK"),';') ) {
+			this->power = false;
+			Serial.println("OK;");
+		}
     }
+}
+void HvacScout::setAutomatic(bool newState)
+{
+    this->automatic = newState;
 }
 void HvacScout::setQuiet(bool newState)
 {
@@ -82,21 +120,48 @@ void HvacScout::setQuiet(bool newState)
 }
 void HvacScout::setDelayTime(int seconds)
 {
-    this->delayTime = seconds;
-    this->delayTime *= 1000;
+	this->delayTime = seconds;
+	this->delayTime *= 1000;
+}
+void HvacScout::changeDelayTime(int seconds)
+{
+	this->serial->print(F("setDelayTime:"));
+	this->serial->print(seconds);
+	this->serial->println(";");
+	if ( readResultFromSerial(F("OK"),';') ) {
+		Serial.println("OK;");
+	} else {
+		Serial.println("ERROR:0;");
+	}
 }
 // getters:
 String HvacScout::getName()
 {
     return this->name;
 }
+int8_t HvacScout::getGroupId()
+{
+	return this->groupId;
+}
 uint8_t HvacScout::getTemperature()
 {
     return this->temperature;
 }
+uint8_t HvacScout::getMaxTemperature()
+{
+    return this->maxTemperature;
+}
+uint8_t HvacScout::getHumidity()
+{
+    return this->humidity;
+}
 bool HvacScout::getPower()
 {
     return this->power;
+}
+bool HvacScout::getAutomatic()
+{
+    return this->automatic;
 }
 bool HvacScout::getQuiet()
 {
