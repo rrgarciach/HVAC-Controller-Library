@@ -58,8 +58,8 @@ bool HvacScout::readResultFromSerial(String expected, char terminator)
         String message;
         char c;
         while ( this->serial->available() ) {
-			delay(50);
             c = this->serial->read();
+			delay(50);
             if (c == terminator) break;
             message += c;
         }
@@ -125,14 +125,16 @@ void HvacScout::setDelayTime(int seconds)
 }
 void HvacScout::changeDelayTime(int seconds)
 {
-	this->serial->print(F("setDelayTime:"));
+	this->serial->print(F("changeDelayTime:"));
 	this->serial->print(seconds);
 	this->serial->println(";");
-	if ( readResultFromSerial(F("OK"),';') ) {
-		Serial.println("OK;");
-	} else {
-		Serial.println("ERROR:0;");
-	}
+	// I commented these lines due that te response is taking a lot of time
+	// and this conditional is not receiving the answer at time failling into ERROR:0
+//	if ( readResultFromSerial(F("OK"),';') ) {
+//		Serial.println("OK;");
+//	} else {
+//		Serial.println("ERROR:0;");
+//	}
 }
 // getters:
 String HvacScout::getName()
