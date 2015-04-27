@@ -88,7 +88,7 @@ void HvacScout::setMaxTemperature(uint8_t value)
 }
 void HvacScout::setHumidity(uint8_t value)
 {
-    this->temperature = value;
+    this->humidity = value;
 }
 void HvacScout::setPower(bool newState)
 {
