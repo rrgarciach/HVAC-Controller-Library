@@ -44,7 +44,7 @@ void HvacScout::start()
 {
     Serial.print(F("Starting Serial of "));
     Serial.println(this->getName());
-    this->serial->begin(9600);
+    this->serial->begin(38400);
 }
 void HvacScout::end()
 {
