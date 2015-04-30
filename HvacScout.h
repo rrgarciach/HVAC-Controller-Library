@@ -12,6 +12,8 @@ class HvacScout
         void startSPP();
         void start();
         void end();
+		void ping();
+		void resetPing();
         // setters:
 		void setName(String name);
 		void setGroupId(int8_t value);
@@ -26,6 +28,7 @@ class HvacScout
 		void changeDelayTime(int seconds);
         // getters:
 		String getName();
+		bool getStatus();
 		int8_t getGroupId();
 		uint8_t getTemperature();
 		uint8_t getMaxTemperature();
@@ -43,6 +46,8 @@ class HvacScout
         uint8_t pinKey;
         uint8_t vcc;
         String name;
+        bool status;
+        int pingCount;
         int8_t groupId;
         uint8_t temperature;
         uint8_t maxTemperature;
