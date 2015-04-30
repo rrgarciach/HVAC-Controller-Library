@@ -13,7 +13,7 @@ HvacScout::HvacScout(String name, uint8_t pinRx, uint8_t pinTx, uint8_t pinKey, 
     pinMode(this->pinKey, OUTPUT);
     pinMode(this->vcc, OUTPUT);
     this->name = name;
-    this->status = true;
+    this->status = false;
     this->pingCount = 0;
     this->groupId = -1;
     this->temperature = 0;
@@ -58,7 +58,7 @@ void HvacScout::ping() {
 	Serial.print(F("PING = "));
 	Serial.println(this->pingCount);
 	this->pingCount += 1;
-	if (pingCount > 5) this->status = false;
+	if (pingCount > 2) this->status = false;
 }
 void HvacScout::resetPing() {
 	this->pingCount = 0;
@@ -71,7 +71,7 @@ bool HvacScout::readResultFromSerial(String expected, char terminator)
         char c;
         while ( this->serial->available() ) {
             c = this->serial->read();
-			delay(50);
+//			delay(50);
             if (c == terminator) break;
             message += c;
         }
