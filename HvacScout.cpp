@@ -88,6 +88,7 @@ void HvacScout::setName(String name)
 }
 void HvacScout::setGroupId(int8_t value)
 {
+	this->triggerAutomatic(false);
     this->groupId = value;
 }
 void HvacScout::setTemperature(uint8_t value)
@@ -125,6 +126,22 @@ void HvacScout::triggerPower(bool newState)
 void HvacScout::setAutomatic(bool newState)
 {
     this->automatic = newState;
+}
+void HvacScout::triggerAutomatic(bool newState)
+{
+    if (newState == true) {
+        this->serial->println(F("autoOn;"));
+        if ( readResultFromSerial(F("OK"),';') ) {
+			this->automatic = true;
+			Serial.println("OK;");
+		}
+    } else {
+        this->serial->println(F("autoOff;"));
+        if ( readResultFromSerial(F("OK"),';') ) {
+			this->automatic = false;
+			Serial.println("OK;");
+		}
+    }
 }
 void HvacScout::setQuiet(bool newState)
 {
@@ -189,4 +206,42 @@ uint16_t HvacScout::getDelayTime()
 {
     int seconds = this->delayTime / 1000;
     return ( seconds );
+}
+String HvacScout::scoutToJson(int scoutId) {
+	String jsonObj;
+	jsonObj += F("{");
+	jsonObj += F("\"id\":");
+	jsonObj += scoutId;
+	jsonObj += F(",");
+	jsonObj += F("\"status\":");
+	jsonObj += this->getStatus();
+	jsonObj += F(",");
+	jsonObj += F("\"groupId\":");
+	jsonObj += this->getGroupId();
+	jsonObj += F(",");
+	jsonObj += F("\"name\":\"");
+	jsonObj += this->getName();
+	jsonObj += F("\",");
+	jsonObj += F("\"temperature\":");
+	jsonObj += this->getTemperature();
+	jsonObj += F(",");
+	jsonObj += F("\"maxTemperature\":");
+	jsonObj += this->getMaxTemperature();
+	jsonObj += F(",");
+	jsonObj += F("\"humidity\":");
+	jsonObj += this->getHumidity();
+	jsonObj += F(",");
+	jsonObj += F("\"power\":");
+	jsonObj += this->getPower();
+	jsonObj += F(",");
+	jsonObj += F("\"automatic\":");
+	jsonObj += this->getAutomatic();
+	jsonObj += F(",");
+	jsonObj += F("\"quiet\":");
+	jsonObj += this->getQuiet();
+	jsonObj += F(",");
+	jsonObj += F("\"delayTime\":");
+	jsonObj += this->getDelayTime();
+	jsonObj += F("}");
+	return jsonObj;
 }

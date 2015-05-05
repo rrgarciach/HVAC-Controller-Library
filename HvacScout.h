@@ -23,6 +23,7 @@ class HvacScout
 		void triggerPower(bool newState);
 		void setHumidity(uint8_t value);
 		void setAutomatic(bool newState);
+		void triggerAutomatic(bool newState);
 		void setQuiet(bool newState);
 		void setDelayTime(int seconds);
 		void changeDelayTime(int seconds);
@@ -37,6 +38,7 @@ class HvacScout
 		bool getAutomatic();
 		bool getQuiet();
 		uint16_t getDelayTime();
+		String scoutToJson(int scoutId);
         // attributes:
         SoftwareSerial* serial;
 	protected:
