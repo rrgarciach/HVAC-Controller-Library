@@ -154,7 +154,7 @@ void HvacScout::setDelayTime(int seconds)
 }
 void HvacScout::changeDelayTime(int seconds)
 {
-	this->serial->print(F("changeDelayTime:"));
+	this->serial->print(F("setDelTime:"));
 	this->serial->print(seconds);
 	this->serial->println(";");
 	// I commented these lines due that te response is taking a lot of time
